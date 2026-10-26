@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>عادل تي في | ADEL TV</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
+<style>
+  :root {
+    --bg-dark: #070d17;
+    --card-bg: #0f1928;
+    --card-hover: #16253b;
+    --cyan-blue: #00b4d8;
+    --neon-blue: #38bdf8;
+    --neon-green: #00f59b;
+    --emerald: #10b981;
+    --gold: #f59e0b;
+    --text-white: #ffffff;
+    --text-gray: #94a3b8;
+    --gradient: linear-gradient(135deg, #00b4d8 0%, #10b981 100%);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    font-family: system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+    overflow-x: hidden;
+    padding-bottom: 70px;
+  }
+
+  /* ================== رأس الصفحة والشعار المفرغ ================== */
+  header {
+    background: rgba(7, 13, 23, 0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1.5px solid rgba(56, 189, 248, 0.25);
+    padding: 8px 14px;
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .svg-adel-logo {
+    width: 42px;
+    height: 50px;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.6));
+  }
+
+  .brand-titles { display: flex; flex-direction: column; }
+  .brand-name-gold {
+    font-size: 18px;
+    font-weight: 900;
+    background: linear-gradient(180deg, #fef08a 0%, #f59e0b 60%, #b45309 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .brand-tag-blue {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--neon-blue);
+    letter-spacing: 2px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon-toggle-btn {
+    background: rgba(0, 180, 216, 0.15);
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ================== مشغل الفيديو المدمج ================== */
+  .player-section {
+    position: sticky;
+    top: 66px;
+    z-index: 40;
+    background: #000;
+    width: 100%;
+    border-bottom: 2px solid var(--emerald);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    max-height: 40vh;
+    aspect-ratio: 16 / 9;
+    background: #040711;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .player-info {
+    padding: 7px 14px;
+    background: #0b1422;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .current-channel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+    animation: blink 1.2s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .current-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .current-tag {
+    font-size: 10.5px;
+    color: var(--cyan-blue);
+    background: rgba(0, 180, 216, 0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  /* ================== التبويبات الرئيسية والبحث ================== */
+  .controls-bar {
+    padding: 10px 14px 4px;
+  }
+
+  /* تبويبات النمط الرئيسي: بالدول / بالتصنيف / المفضلة */
+  .mode-switch-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .mode-btn {
+    padding: 8px 4px;
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-gray);
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s;
+  }
+
+  .mode-btn.active {
+    background: var(--gradient);
+    color: #041118;
+    font-weight: 900;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(0, 245, 155, 0.25);
+  }
+
+  .search-box-wrap {
+    position: relative;
+    margin-bottom: 8px;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 38px;
+    background: var(--card-bg);
+    border: 1.5px solid rgba(0, 180, 216, 0.25);
+    border-radius: 10px;
+    padding: 0 14px;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+  }
+  .search-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(0, 245, 155, 0.25);
+  }
+
+  /* شريط التراجع والملاحة السريعة */
+  .nav-breadcrumb-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    background: #0d1a2d;
+    border-bottom: 1px solid rgba(0, 180, 216, 0.2);
+    margin-bottom: 8px;
+  }
+
+  .btn-back-folder {
+    background: var(--gradient);
+    border: 0;
+    color: #041118;
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .breadcrumb-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--neon-blue);
+  }
+
+  /* ================== شبكة مربعات الدول والتصنيفات (FOLDER BOXES) ================== */
+  .folders-container {
+    padding: 8px 14px;
+  }
+
+  .folder-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media(min-width: 600px) {
+    .folder-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media(min-width: 850px) {
+    .folder-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* تصميم المربع الحصري */
+  .folder-box {
+    background: linear-gradient(145deg, #0e1929 0%, #13243a 100%);
+    border: 1.5px solid rgba(0, 180, 216, 0.25);
+    border-radius: 18px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .folder-box:active {
+    transform: scale(0.96);
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(0, 245, 155, 0.3);
+  }
+
+  .folder-icon {
+    font-size: 38px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  }
+
+  .folder-name {
+    font-size: 14.5px;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .folder-count-badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--cyan-blue);
+    background: rgba(0, 180, 216, 0.15);
+    padding: 3px 8px;
+    border-radius: 99px;
+    border: 1px solid rgba(0, 180, 216, 0.25);
+  }
+
+  /* ================== عرض القنوات داخل المربع (CHANNELS VIEW) ================== */
+  .channels-view-wrap {
+    display: none;
+    padding: 4px 14px;
+  }
+
+  /* طريقة العرض 1: شبكة كروت مربعة */
+  .channels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  .channel-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+  }
+
+  .channel-card:active {
+    transform: scale(0.96);
+    border-color: var(--neon-green);
+  }
+
+  .channel-card.playing {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 12px rgba(0, 245, 155, 0.35);
+    background: #112438;
+  }
+
+  .channel-logo-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: #08111d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 180, 216, 0.15);
+  }
+
+  .channel-logo {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+  }
+
+  .channel-title {
+    font-size: 11px;
+    font-weight: 700;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .channel-tag {
+    font-size: 9px;
+    color: var(--cyan-blue);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .fav-btn {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.25);
+    padding: 3px;
+    cursor: pointer;
+  }
+  .fav-btn.is-fav { color: #facc15; }
+
+  /* طريقة العرض 2: قائمة خطية عريضة (List Mode) */
+  .channels-grid.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .channels-grid.list-view .channel-card {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 12px;
+    text-align: right;
+  }
+
+  .channels-grid.list-view .channel-card-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .channels-grid.list-view .channel-logo-wrap {
+    margin-bottom: 0;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(239, 68, 68, 0.95);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: bold;
+    display: none;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ترويسة التطبيق والشعار المفرغ -->
+  <header>
+    <div class="header-content">
+      <div class="brand-logo-container" onclick="showFolderView()">
+        <!-- شعار النيون وميزان العدالة المفرغ بدقة -->
+        <svg class="svg-adel-logo" viewBox="0 0 160 190" fill="none">
+          <defs>
+            <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fffbeb" />
+              <stop offset="30%" stop-color="#fde047" />
+              <stop offset="65%" stop-color="#d97706" />
+              <stop offset="100%" stop-color="#78350f" />
+            </linearGradient>
+          </defs>
+          <g filter="url(#neonGlow)" stroke="#38bdf8" stroke-width="4.5" stroke-linecap="round">
+            <line x1="80" y1="36" x2="52" y2="10" /><line x1="80" y1="36" x2="108" y2="10" />
+          </g>
+          <rect x="18" y="34" width="124" height="88" rx="16" filter="url(#neonGlow)" stroke="#38bdf8" stroke-width="5" fill="none" />
+          <g filter="url(#neonGlow)" stroke="#38bdf8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="80" y1="44" x2="80" y2="110" stroke-width="4" />
+            <circle cx="80" cy="45" r="4" fill="#38bdf8" />
+            <line x1="62" y1="110" x2="98" y2="110" stroke-width="4" />
+            <path d="M 42 66 Q 80 54 118 66" stroke-width="3.5" fill="none" />
+            <line x1="42" y1="66" x2="31" y2="92" stroke-width="2" />
+            <line x1="42" y1="66" x2="53" y2="92" stroke-width="2" />
+            <path d="M 28 92 Q 42 102 56 92 Z" fill="#0369a1" stroke-width="2.5" />
+            <line x1="118" y1="66" x2="107" y2="92" stroke-width="2" />
+            <line x1="118" y1="66" x2="129" y2="92" stroke-width="2" />
+            <path d="M 104 92 Q 118 102 132 92 Z" fill="#0369a1" stroke-width="2.5" />
+          </g>
+          <text x="80" y="152" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="900" font-size="28" fill="url(#goldGrad)">عَادِلْ</text>
+          <text x="80" y="178" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="900" font-size="19" fill="url(#goldGrad)" letter-spacing="2">تِي فِي</text>
+        </svg>
+        <div class="brand-titles">
+          <div class="brand-name-gold">عادل تي في</div>
+          <div class="brand-tag-blue">ADEL TV • PRO</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- زر حرية العرض: شبكة أو قائمة -->
+        <button class="icon-toggle-btn" id="viewToggleBtn" onclick="toggleViewLayout()">
+          <span id="viewIcon">📋</span> <span id="viewLabel">قائمة</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- مشغل الفيديو العلوي المثبت -->
+  <section class="player-section">
+    <div class="video-wrapper">
+      <video id="videoPlayer" controls playsinline webkit-playsinline></video>
+    </div>
+    <div class="player-info">
+      <div class="current-channel">
+        <div class="live-dot"></div>
+        <div class="current-name" id="currentChName">اختر أي مربع للبدء</div>
+      </div>
+      <div class="current-tag" id="currentChTag">بث مباشر</div>
+    </div>
+  </section>
+
+  <!-- التبويبات والبحث -->
+  <section class="controls-bar">
+    <!-- تبديل الأنماط: بالدول / بالتصنيف / الكل / المفضلة -->
+    <div class="mode-switch-tabs">
+      <button class="mode-btn active" id="btnModeCountries" onclick="setMode('countries')">🌍 الدول</button>
+      <button class="mode-btn" id="btnModeCategories" onclick="setMode('categories')">📑 التصنيفات</button>
+      <button class="mode-btn" id="btnModeAll" onclick="setMode('all')">📺 الكل</button>
+      <button class="mode-btn" id="btnModeFav" onclick="setMode('fav')">⭐ المفضلة</button>
+    </div>
+
+    <!-- حقل البحث الفوري -->
+    <div class="search-box-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 ابحث عن دولة، تصنيف، أو اسم قناة...">
+    </div>
+  </section>
+
+  <!-- شريط التراجع والملاحة عند الدخول لأي مربع -->
+  <div class="nav-breadcrumb-bar" id="breadcrumbBar">
+    <button class="btn-back-folder" onclick="showFolderView()">
+      <span>➔</span> <span id="backBtnLabel">رجوع للمربعات</span>
+    </button>
+    <div class="breadcrumb-title" id="breadcrumbTitle">محتوى المربع</div>
+  </div>
+
+  <!-- الواجهة 1: عرض المربعات (الدول أو التصنيفات) -->
+  <main class="folders-container" id="foldersContainer">
+    <div class="folder-grid" id="folderGrid"></div>
+  </main>
+
+  <!-- الواجهة 2: عرض القنوات بعد الضغط على أي مربع -->
+  <main class="channels-view-wrap" id="channelsViewWrap">
+    <div class="channels-grid" id="channelsGrid"></div>
+  </main>
+
+  <div class="toast" id="toastMsg">⚠️ يتعذر تشغيل هذا البث حالياً</div>
+
+  <!-- بيانات القنوات المدمجة فائقة السرعة -->
+  <script type="text/plain" id="bundleM3u">
+#EXTINF:-1 tvg-id="KTV1.kw" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/43/Ktv1_logo.png" group-title="General",KTV 1 الكويت
+https://shd-amg-fast.edgenextcdn.net/tx001/playlist.m3u8
+#EXTINF:-1 tvg-id="KTV2.kw" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/43/Ktv1_logo.png" group-title="General",KTV 2 English
+https://shd-amg-fast.edgenextcdn.net/tx002/playlist.m3u8
+#EXTINF:-1 tvg-id="KTVAlMajlis.kw" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/36/Al-Majlis_TV_logo.png" group-title="News",قناة المجلس الكويتية
+https://shd-amg-fast.edgenextcdn.net/tx003/playlist.m3u8
+#EXTINF:-1 tvg-id="AlArabiya.sa" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Al_Arabiya_Logo_2020.svg/200px-Al_Arabiya_Logo_2020.svg.png" group-title="News",العربية الإخبارية
+https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8
+#EXTINF:-1 tvg-id="AlHadath.sa" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Al_Hadath_Logo.svg/200px-Al_Hadath_Logo.svg.png" group-title="News",الحدث
+https://live.alarabiya.net/alarabiapublish/alhadath.smil/playlist.m3u8
+#EXTINF:-1 tvg-id="AlJazeera.qa" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Al_Jazeera_Media_Network_Logo.svg/200px-Al_Jazeera_Media_Network_Logo.svg.png" group-title="News",الجزيرة الإخبارية
+https://live-hls-web-aje.getaj.net/AJE/01.m3u8
+#EXTINF:-1 tvg-id="RotanaCinemaKSA.sa" tvg-logo="https://i.imgur.com/pGgp38I.png" group-title="Movies",روتانا سينما السعودية
+https://rotana.hibridcdn.net/rotananet/cinema_net-7Y83PP5adWixDF93/playlist.m3u8
+#EXTINF:-1 tvg-id="RotanaCinemaEgypt.eg" tvg-logo="https://i.imgur.com/dGlKoLW.png" group-title="Movies",روتانا سينما مصر
+https://rotana.hibridcdn.net/rotananet/cinemamasr_net-7Y83PP5adWixDF93/playlist.m3u8
+#EXTINF:-1 tvg-id="MixHollywood.eg" tvg-logo="https://i.imgur.com/1ENdbZn.png" group-title="Movies;Action",ميكس هوليوود Mix Hollywood
+https://ml-pull-hwc.myco.io/MixTV/hls/index.m3u8
+#EXTINF:-1 tvg-id="MoviesAction.sa" tvg-logo="https://i.imgur.com/NIVhISa.png" group-title="Movies;Action",أفلام أكشن Movies Action
+https://shd-amg-fast.edgenextcdn.net/tx011/playlist.m3u8
+#EXTINF:-1 tvg-id="MoviesThriller.sa" tvg-logo="https://i.imgur.com/JWihdcl.png" group-title="Movies;Horror",أفلام رعب وإثارة Thriller
+https://shd-amg-fast.edgenextcdn.net/tx012/playlist.m3u8
+#EXTINF:-1 tvg-id="MBCBollywood.ae" tvg-logo="https://i.imgur.com/TTAGFHG.png" group-title="Movies;Entertainment",إم بي سي بوليوود MBC
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-bollywood/546eb40d7dcf9a209255dd2496903764/index.m3u8
+#EXTINF:-1 tvg-id="MBCPlusDrama.sa" tvg-logo="https://i.imgur.com/lxWdjXG.png" group-title="Entertainment",إم بي سي دراما MBC+
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-plus-drama/e37251ec2aac8f6c98f75cd0fa37cd28/index.m3u8
+#EXTINF:-1 tvg-id="QuranTV.sa" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Saudi_Quran_TV.png/200px-Saudi_Quran_TV.png" group-title="Religious",القرآن الكريم مباشر من مكة
+https://shd-amg-fast.edgenextcdn.net/tx004/playlist.m3u8
+#EXTINF:-1 tvg-id="SunnahTV.sa" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Saudi_Sunnah_TV.png/200px-Saudi_Sunnah_TV.png" group-title="Religious",السنة النبوية مباشر من المدينة
+https://shd-amg-fast.edgenextcdn.net/tx005/playlist.m3u8
+#EXTINF:-1 tvg-id="SpaceToon.ae" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Spacetoon_logo.png/200px-Spacetoon_logo.png" group-title="Kids",سبيستون Spacetoon
+https://shd-amg-fast.edgenextcdn.net/tx006/playlist.m3u8
+#EXTINF:-1 tvg-id="DubaiTV.ae" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Dubai_TV_logo.svg/200px-Dubai_TV_logo.svg.png" group-title="General",تلفزيون دبي
+https://shd-amg-fast.edgenextcdn.net/tx007/playlist.m3u8
+#EXTINF:-1 tvg-id="ADSports1.ae" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Abu_Dhabi_Sports.png/200px-Abu_Dhabi_Sports.png" group-title="Sports",أبوظبي الرياضية 1
+https://shd-amg-fast.edgenextcdn.net/tx008/playlist.m3u8
+#EXTINF:-1 tvg-id="YasserAlDawsari.sa" group-title="Religious",تلاوات الشيخ ياسر الدوسري 24h
+https://shd-amg-fast.edgenextcdn.net/tx009/playlist.m3u8
+#EXTINF:-1 tvg-id="00sReplay.us" tvg-logo="https://images.pluto.tv/channels/62ba60f059624e000781c436/colorLogoPNG.png" group-title="Movies;Action",00s Action Replay USA
+https://jmp2.uk/plu-62ba60f059624e000781c436.m3u8
+#EXTINF:-1 tvg-id="50CentAction.us" tvg-logo="https://provider-static.plex.tv/epg/cms/production/bcfb9977-809f-49ae-acc7-430f2c6ffb26/50CentAction_Logo_1500x1000_DarkBG_-_Chris_Connors.png" group-title="Movies;Action",50 Cent Action Movies US
+https://jmp2.uk/plu-68487fb3f212bedacf5a53e3.m3u8
+#EXTINF:-1 tvg-id="ParamountMovieChannel.us" tvg-logo="https://i.imgur.com/sj5h9bl.png" group-title="Movies",Paramount Channel USA
+https://jmp2.uk/plu-5cb0cae7a461406ffe3f5213.m3u8
+#EXTINF:-1 tvg-id="PlutoTVHorror.us" tvg-logo="https://images.pluto.tv/channels/569546031a619b8f07ce6e25/colorLogoPNG.png" group-title="Movies;Horror",Pluto TV Horror رعب
+https://jmp2.uk/plu-569546031a619b8f07ce6e25.m3u8
+#EXTINF:-1 tvg-id="PlutoTVComedy.us" tvg-logo="https://images.pluto.tv/channels/62ea3d24b8e02600071fa296/colorLogoPNG.png" group-title="Comedy",Pluto Comedy كوميديا
+https://jmp2.uk/plu-62ea3d24b8e02600071fa296.m3u8
+  </script>
+
+<script>
+  // قاموس أعلام وأسماء الدول
+  const COUNTRIES = {
+    'KW': { name: 'الكويت', flag: '🇰🇼' },
+    'SA': { name: 'السعودية', flag: '🇸🇦' },
+    'EG': { name: 'مصر', flag: '🇪🇬' },
+    'AE': { name: 'الإمارات', flag: '🇦🇪' },
+    'QA': { name: 'قطر', flag: '🇶🇦' },
+    'BH': { name: 'البحرين', flag: '🇧🇭' },
+    'OM': { name: 'عُمان', flag: '🇴🇲' },
+    'IQ': { name: 'العراق', flag: '🇮🇶' },
+    'JO': { name: 'الأردن', flag: '🇯🇴' },
+    'LB': { name: 'لبنان', flag: '🇱🇧' },
+    'SY': { name: 'سوريا', flag: '🇸🇾' },
+    'PS': { name: 'فلسطين', flag: '🇵🇸' },
+    'YE': { name: 'اليمن', flag: '🇾🇪' },
+    'MA': { name: 'المغرب', flag: '🇲🇦' },
+    'DZ': { name: 'الجزائر', flag: '🇩🇿' },
+    'TN': { name: 'تونس', flag: '🇹🇳' },
+    'US': { name: 'أمريكا', flag: '🇺🇸' },
+    'UK': { name: 'بريطانيا', flag: '🇬🇧' },
+    'TR': { name: 'تركيا', flag: '🇹🇷' }
+  };
+
+  // قاموس أسماء وأيقونات التصنيفات (Genres)
+  const CATEGORIES = {
+    'News': { name: 'أخبار', icon: '📰' },
+    'Sports': { name: 'رياضة', icon: '⚽' },
+    'Movies': { name: 'أفلام', icon: '🎬' },
+    'Action': { name: 'أكشن', icon: '🔥' },
+    'Horror': { name: 'رعب', icon: '👻' },
+    'Comedy': { name: 'كوميديا', icon: '😂' },
+    'Religious': { name: 'إسلامية ودينية', icon: '🕋' },
+    'Kids': { name: 'أطفال وكرتون', icon: '🎈' },
+    'General': { name: 'قنوات عامة وتنوع', icon: '📺' },
+    'Entertainment': { name: 'مسلسلات وترفيه', icon: '🎭' }
+  };
+
+  const video = document.getElementById('videoPlayer');
+  const folderGrid = document.getElementById('folderGrid');
+  const channelsGrid = document.getElementById('channelsGrid');
+  const foldersContainer = document.getElementById('foldersContainer');
+  const channelsViewWrap = document.getElementById('channelsViewWrap');
+  const breadcrumbBar = document.getElementById('breadcrumbBar');
+  const breadcrumbTitle = document.getElementById('breadcrumbTitle');
+  const backBtnLabel = document.getElementById('backBtnLabel');
+  const searchInput = document.getElementById('searchInput');
+  const currentChName = document.getElementById('currentChName');
+  const currentChTag = document.getElementById('currentChTag');
+  const toastMsg = document.getElementById('toastMsg');
+  const viewToggleBtn = document.getElementById('viewToggleBtn');
+  const viewIcon = document.getElementById('viewIcon');
+  const viewLabel = document.getElementById('viewLabel');
+
+  let hlsInstance = null;
+  let allChannels = [];
+  let favorites = JSON.parse(localStorage.getItem('adel_tv_favs_v3') || '[]');
+
+  let currentMode = 'countries'; // 'countries', 'categories', 'all', 'fav'
+  let activeFilterType = null; // 'country' أو 'category'
+  let activeFilterValue = null; // مثل 'KW' أو 'News'
+  let isListView = false; // التبديل بين المربعات والقائمة
+
+  // تحميل ومعالجة القنوات
+  function parseM3U(text) {
+    const lines = text.split('\n');
+    allChannels = [];
+    let current = null;
+
+    for (let line of lines) {
+      line = line.trim();
+      if (line.startsWith('#EXTINF:')) {
+        const title = line.split(',').slice(1).join(',').trim();
+        const logoMatch = line.match(/tvg-logo="([^"]*)"/i);
+        const groupMatch = line.match(/group-title="([^"]*)"/i);
+        const idMatch = line.match(/tvg-id="([^"]*)"/i);
+
+        let cCode = '';
+        if (idMatch && idMatch[1]) {
+          const match = idMatch[1].match(/\.([a-z]{2})(@|$)/i);
+          if (match) cCode = match[1].toUpperCase();
+        }
+
+        const countryInfo = COUNTRIES[cCode] || { name: 'عالمي', flag: '🌐' };
+
+        current = {
+          name: title || 'قناة بث',
+          logo: logoMatch ? logoMatch[1] : '',
+          group: groupMatch ? groupMatch[1] : 'General',
+          country: cCode || 'GLOBAL',
+          countryName: countryInfo.name,
+          countryFlag: countryInfo.flag,
+          url: ''
+        };
+      } else if (line && !line.startsWith('#') && current) {
+        current.url = line;
+        allChannels.push(current);
+        current = null;
+      }
+    }
+  }
+
+  // ==========================================
+  // تبديل الأنماط الرئيسية (Mode Selector)
+  // ==========================================
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    
+    if (mode === 'countries') document.getElementById('btnModeCountries').classList.add('active');
+    if (mode === 'categories') document.getElementById('btnModeCategories').classList.add('active');
+    if (mode === 'all') document.getElementById('btnModeAll').classList.add('active');
+    if (mode === 'fav') document.getElementById('btnModeFav').classList.add('active');
+
+    searchInput.value = '';
+
+    if (mode === 'countries') {
+      renderCountryFolders();
+    } else if (mode === 'categories') {
+      renderCategoryFolders();
+    } else if (mode === 'all') {
+      openChannelsView(allChannels, '📺 جميع القنوات', 'الرئيسية');
+    } else if (mode === 'fav') {
+      const favList = allChannels.filter(c => favorites.includes(c.url));
+      openChannelsView(favList, '⭐ القنوات المفضلة', 'الرئيسية');
+    }
+  }
+
+  // 1. بناء مربعات الدول (Grid of Countries)
+  function renderCountryFolders() {
+    activeFilterType = null;
+    foldersContainer.style.display = 'block';
+    channelsViewWrap.style.display = 'none';
+    breadcrumbBar.style.display = 'none';
+    folderGrid.innerHTML = '';
+
+    const stats = {};
+    allChannels.forEach(ch => {
+      const code = ch.country || 'GLOBAL';
+      stats[code] = (stats[code] || 0) + 1;
+    });
+
+    const sortedCodes = Object.keys(stats).sort((a,b) => {
+      const aIsArab = COUNTRIES[a] ? 1 : 0;
+      const bIsArab = COUNTRIES[b] ? 1 : 0;
+      if (aIsArab !== bIsArab) return bIsArab - aIsArab;
+      return stats[b] - stats[a];
+    });
+
+    sortedCodes.forEach(code => {
+      const info = COUNTRIES[code] || { name: 'بث دولي', flag: '🌐' };
+      const box = document.createElement('div');
+      box.className = 'folder-box';
+      box.innerHTML = `
+        <div class="folder-icon">${info.flag}</div>
+        <div class="folder-name">${info.name}</div>
+        <div class="folder-count-badge">${stats[code]} قناة</div>
+      `;
+      box.onclick = () => {
+        const countryChannels = allChannels.filter(c => c.country === code);
+        activeFilterType = 'country';
+        activeFilterValue = code;
+        openChannelsView(countryChannels, `${info.flag} قنوات ${info.name}`, 'مربعات الدول');
+      };
+      folderGrid.appendChild(box);
+    });
+  }
+
+  // 2. بناء مربعات التصنيفات (Grid of Categories)
+  function renderCategoryFolders() {
+    activeFilterType = null;
+    foldersContainer.style.display = 'block';
+    channelsViewWrap.style.display = 'none';
+    breadcrumbBar.style.display = 'none';
+    folderGrid.innerHTML = '';
+
+    const stats = {};
+    allChannels.forEach(ch => {
+      const groups = ch.group.split(';');
+      groups.forEach(g => {
+        const cleanG = g.trim();
+        if(cleanG) stats[cleanG] = (stats[cleanG] || 0) + 1;
+      });
+    });
+
+    Object.keys(stats).sort((a,b) => stats[b] - stats[a]).forEach(catKey => {
+      const catInfo = CATEGORIES[catKey] || { name: catKey, icon: '📺' };
+      const box = document.createElement('div');
+      box.className = 'folder-box';
+      box.innerHTML = `
+        <div class="folder-icon">${catInfo.icon}</div>
+        <div class="folder-name">${catInfo.name}</div>
+        <div class="folder-count-badge">${stats[catKey]} قناة</div>
+      `;
+      box.onclick = () => {
+        const catChannels = allChannels.filter(c => c.group.includes(catKey));
+        activeFilterType = 'category';
+        activeFilterValue = catKey;
+        openChannelsView(catChannels, `${catInfo.icon} قنوات ${catInfo.name}`, 'مربعات التصنيفات');
+      };
+      folderGrid.appendChild(box);
+    });
+  }
+
+  // 3. فتح شاشة القنوات التابعة للمربع الذي تم اختياره
+  function openChannelsView(channelsList, titleText, backLabel) {
+    foldersContainer.style.display = 'none';
+    channelsViewWrap.style.display = 'block';
+    breadcrumbBar.style.display = 'flex';
+    breadcrumbTitle.textContent = titleText;
+    backBtnLabel.textContent = `رجوع إلى ${backLabel}`;
+
+    renderChannels(channelsList);
+  }
+
+  // العودة إلى المربعات
+  function showFolderView() {
+    if (currentMode === 'countries') renderCountryFolders();
+    else if (currentMode === 'categories') renderCategoryFolders();
+    else setMode('countries');
+  }
+
+  // عرض القنوات (يدعم نمط المربعات Grid ونمط القائمة List)
+  function renderChannels(channels) {
+    channelsGrid.innerHTML = '';
+    channelsGrid.className = isListView ? 'channels-grid list-view' : 'channels-grid';
+
+    if(channels.length === 0){
+      channelsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;">لا توجد قنوات هنا</div>';
+      return;
+    }
+
+    channels.forEach(ch => {
+      const card = document.createElement('div');
+      card.className = 'channel-card';
+      const isFav = favorites.includes(ch.url);
+
+      if (isListView) {
+        // تصميم القائمة العريضة
+        card.innerHTML = `
+          <div class="channel-card-left">
+            <div class="channel-logo-wrap">
+              <img class="channel-logo" src="${ch.logo || 'https://via.placeholder.com/48x48/0f1928/00b4d8?text=TV'}" 
+                   onerror="this.src='https://via.placeholder.com/48x48/0f1928/00b4d8?text=TV'">
+            </div>
+            <div>
+              <div class="channel-title" style="font-size:13px">${ch.name}</div>
+              <div class="channel-tag">${ch.countryFlag} ${ch.countryName} • ${ch.group}</div>
+            </div>
+          </div>
+          <span class="fav-btn ${isFav ? 'is-fav' : ''}" style="position:static" onclick="toggleFav(event, '${ch.url}')">★</span>
+        `;
+      } else {
+        // تصميم المربعات الشبكية
+        card.innerHTML = `
+          <span class="fav-btn ${isFav ? 'is-fav' : ''}" onclick="toggleFav(event, '${ch.url}')">★</span>
+          <div class="channel-logo-wrap">
+            <img class="channel-logo" src="${ch.logo || 'https://via.placeholder.com/48x48/0f1928/00b4d8?text=TV'}" 
+                 onerror="this.src='https://via.placeholder.com/48x48/0f1928/00b4d8?text=TV'">
+          </div>
+          <div class="channel-title" title="${ch.name}">${ch.name}</div>
+          <div class="channel-tag">${ch.countryFlag} ${ch.countryName}</div>
+        `;
+      }
+
+      card.onclick = () => {
+        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('playing'));
+        card.classList.add('playing');
+        playStream(ch);
+      };
+
+      channelsGrid.appendChild(card);
+    });
+  }
+
+  // تبديل شكل العرض للمستخدم (مربعات / قائمة)
+  function toggleViewLayout() {
+    isListView = !isListView;
+    viewIcon.textContent = isListView ? '🔲' : '📋';
+    viewLabel.textContent = isListView ? 'مربعات' : 'قائمة';
+
+    if (channelsViewWrap.style.display === 'block') {
+      channelsGrid.className = isListView ? 'channels-grid list-view' : 'channels-grid';
+      // إعادة الرسم لتطبيق نمط القائمة
+      const currentCards = Array.from(channelsGrid.children);
+      if(activeFilterType === 'country'){
+        renderChannels(allChannels.filter(c => c.country === activeFilterValue));
+      } else if(activeFilterType === 'category'){
+        renderChannels(allChannels.filter(c => c.group.includes(activeFilterValue)));
+      } else if(currentMode === 'all') {
+        renderChannels(allChannels);
+      } else if(currentMode === 'fav') {
+        renderChannels(allChannels.filter(c => favorites.includes(c.url)));
+      }
+    }
+  }
+
+  // ==========================================
+  // تشغيل القناة مع البروكسي الذكي لفك حظر الدومين
+  // ==========================================
+  function playStream(ch) {
+    currentChName.textContent = `${ch.countryFlag} ${ch.name}`;
+    currentChTag.textContent = ch.countryName;
+
+    let streamUrl = ch.url;
+
+    // حماية الدومين: فك حظر روابط http عبر السيرفر الوسيط
+    if (window.location.protocol === 'https:' && streamUrl.startsWith('http://')) {
+      streamUrl = 'https://corsproxy.io/?' + encodeURIComponent(streamUrl);
+    }
+
+    if (Hls.isSupported()) {
+      if (hlsInstance) hlsInstance.destroy();
+      hlsInstance = new Hls({
+        enableWorker: true,
+        xhrSetup: function(xhr, u) {
+          if (window.location.protocol === 'https:' && u.startsWith('http://')) {
+            xhr.open('GET', 'https://corsproxy.io/?' + encodeURIComponent(u), true);
+          }
+        }
+      });
+      hlsInstance.loadSource(streamUrl);
+      hlsInstance.attachMedia(video);
+      hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+      hlsInstance.on(Hls.Events.ERROR, (e, data) => {
+        if(data.fatal) showToast('⚠️ يتعذر تشغيل هذا السيرفر حالياً');
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = streamUrl;
+      video.play().catch(()=>{});
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showToast(msg) {
+    toastMsg.textContent = msg;
+    toastMsg.style.display = 'block';
+    setTimeout(() => toastMsg.style.display = 'none', 3000);
+  }
+
+  function toggleFav(e, url) {
+    e.stopPropagation();
+    const idx = favorites.indexOf(url);
+    if(idx > -1) favorites.splice(idx, 1);
+    else favorites.push(url);
+    localStorage.setItem('adel_tv_favs_v3', JSON.stringify(favorites));
+
+    if(currentMode === 'fav') setMode('fav');
+    else if(activeFilterType) {
+      if(activeFilterType === 'country') renderChannels(allChannels.filter(c => c.country === activeFilterValue));
+      else renderChannels(allChannels.filter(c => c.group.includes(activeFilterValue)));
+    }
+  }
+
+  // البحث الفوري الحي
+  searchInput.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if(!q){
+      if(activeFilterType === null) showFolderView();
+      return;
+    }
+    const matched = allChannels.filter(c => 
+      c.name.toLowerCase().includes(q) || 
+      c.countryName.toLowerCase().includes(q) || 
+      c.group.toLowerCase().includes(q)
+    );
+    openChannelsView(matched, `نتائج البحث عن: "${q}"`, 'الرئيسية');
+  });
+
+  // بدء تشغيل التطبيق بمربعات الدول
+  const rawData = document.getElementById('bundleM3u').textContent;
+  parseM3U(rawData);
+  setMode('countries');
+
+  // جلب المزيد من القنوات العالمية تلقائياً في الخلفية لزيادة المحتوى
+  fetch('https://iptv-org.github.io/iptv/languages/ara.m3u')
+    .then(r => r.text())
+    .then(txt => {
+      parseM3U(rawData + '\n' + txt);
+      if(currentMode === 'countries') renderCountryFolders();
+      else if(currentMode === 'categories') renderCategoryFolders();
+    }).catch(()=>{});
+</script>
+</body>
+</html>
